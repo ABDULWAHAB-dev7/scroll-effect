@@ -3,28 +3,49 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="theme-color" content="#04070f" />
+  <meta name="description" content="Global logistics journey — a scroll-driven multi-chapter canvas experience." />
   <title>Global Logistics Journey</title>
 
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js" integrity="sha384-g4NTh/Iv5PPU4xPyhEWqPcwtNXOvdaDI8LLnyYfyNZOjKJeYQyjzQ9X5275eBjpt" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js" integrity="sha384-Z3REaz79l2IaAZqJsSABtTbhjgOUYyV3p90XNnAPCSHg3EMTz1fouunq9WZRtj3d" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/@studio-freight/lenis@1.0.42/dist/lenis.min.js" integrity="sha384-li4UtcFCH6QeUqR4JyV58/VgTprMuz9aauj+oWtew7V4Y7ZVjnvz5px9Y3UCG0Ea" crossorigin="anonymous"></script>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@500;600;700&display=swap" rel="stylesheet" />
 
   <style>
+    :root {
+      --bg: #04070f;
+      --ink: #f4f7ff;
+      --electric: #2f9bff;
+      --vignette-a: rgba(2, 6, 20, 0.72);
+      --vignette-b: rgba(2, 6, 20, 0.38);
+    }
+
     * {
       box-sizing: border-box;
       margin: 0;
       padding: 0;
     }
 
+    html {
+      background: var(--bg);
+      overscroll-behavior: none;
+    }
+
     body {
-      background-color: #050811;
-      color: #ffffff;
-      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+      background-color: var(--bg);
+      color: var(--ink);
+      font-family: "Archivo", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
       overflow-x: hidden;
+      -webkit-font-smoothing: antialiased;
+      text-rendering: optimizeLegibility;
     }
 
     .scroll-track {
-      height: 1200vh;
+      height: 1400vh;
       position: relative;
     }
 
@@ -33,6 +54,7 @@
       top: 0;
       width: 100vw;
       height: 100vh;
+      height: 100svh;
       overflow: hidden;
       display: flex;
       align-items: center;
@@ -49,52 +71,103 @@
       pointer-events: none;
     }
 
+    /* ——— Kinetic typography overlays ——— */
+
     .caption-box {
       position: absolute;
       z-index: 2;
-      text-align: center;
-      padding: 0 30px;
+      left: 6vw;
+      bottom: 12vh;
+      max-width: min(660px, 84vw);
+      text-align: left;
+    }
+
+    /* subtle dark vignette behind the text so it stays legible over any frame */
+    .caption-box::before {
+      content: "";
+      position: absolute;
+      z-index: -1;
+      inset: -90px -140px -110px -60px;
+      background: radial-gradient(
+        ellipse closest-side at 32% 62%,
+        var(--vignette-a) 0%,
+        var(--vignette-b) 48%,
+        transparent 78%
+      );
+      pointer-events: none;
+    }
+
+    .tag-mask,
+    .title-mask {
+      overflow: hidden;
+      display: block;
     }
 
     .chapter-tag {
-      font-size: 14px;
+      display: block;
+      transform: translateY(110%);
+      will-change: transform;
+      font-family: "Archivo", sans-serif;
+      font-size: clamp(0.7rem, 1.05vw, 0.9rem);
       font-weight: 700;
-      color: #3b82f6;
+      color: var(--electric);
       text-transform: uppercase;
-      letter-spacing: 0.2em;
-      margin-bottom: 12px;
-      opacity: 0;
-      transform: translateY(20px);
+      letter-spacing: 0.34em;
+      margin-bottom: 14px;
+      text-shadow: 0 0 16px rgba(47, 155, 255, 0.5);
     }
 
     .title {
-      font-size: clamp(2.5rem, 6vw, 5rem);
-      font-weight: 900;
+      display: block;
+      transform: translateY(112%);
+      will-change: transform;
+      font-family: "Anton", "Archivo", sans-serif;
+      font-weight: 400;
+      font-size: clamp(2.9rem, 7vw, 6rem);
       text-transform: uppercase;
-      letter-spacing: -0.03em;
-      line-height: 1.05;
-      opacity: 0;
-      transform: translateY(30px);
-      text-shadow: 0 10px 40px rgba(0, 0, 0, 0.8);
+      letter-spacing: 0.015em;
+      line-height: 0.98;
+      color: var(--ink);
+      text-shadow:
+        0 2px 0 rgba(0, 0, 0, 0.28),
+        0 14px 48px rgba(0, 0, 0, 0.75);
     }
+
+    /* ——— Loader ——— */
 
     #loader {
       position: fixed;
       inset: 0;
-      background: #050811;
+      background: var(--bg);
       z-index: 999;
       display: flex;
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 15px;
+      gap: 18px;
       transition: opacity 0.6s ease;
     }
 
+    .loader-word {
+      font-family: "Anton", sans-serif;
+      font-size: clamp(1rem, 2.2vw, 1.6rem);
+      letter-spacing: 0.28em;
+      text-transform: uppercase;
+      color: var(--ink);
+    }
+
+    .loader-stage {
+      font-size: 12px;
+      font-weight: 600;
+      letter-spacing: 0.3em;
+      text-transform: uppercase;
+      color: var(--electric);
+    }
+
     .bar {
-      width: 200px;
+      width: min(320px, 70vw);
       height: 3px;
-      background: rgba(255, 255, 255, 0.1);
+      background: rgba(244, 247, 255, 0.12);
       border-radius: 99px;
       overflow: hidden;
     }
@@ -102,16 +175,35 @@
     .progress {
       width: 0%;
       height: 100%;
-      background: #3b82f6;
-      transition: width 0.1s linear;
+      background: var(--electric);
+      box-shadow: 0 0 12px rgba(47, 155, 255, 0.65);
+      transition: width 0.15s linear;
+    }
+
+    .pct {
+      font-family: "Archivo", sans-serif;
+      font-weight: 600;
+      font-size: 13px;
+      letter-spacing: 0.2em;
+      color: rgba(244, 247, 255, 0.7);
+      font-variant-numeric: tabular-nums;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .chapter-tag,
+      .title {
+        will-change: auto;
+      }
     }
   </style>
 </head>
 <body>
 
   <div id="loader">
-    <div style="font-size: 14px; letter-spacing: 0.1em; text-transform: uppercase;">Buffering Experience</div>
+    <div class="loader-word">Buffering Experience</div>
+    <div class="loader-stage" id="loaderStage">Stage 01 / 04</div>
     <div class="bar"><div class="progress" id="progress"></div></div>
+    <div class="pct" id="pct">0%</div>
   </div>
 
   <div class="scroll-track" id="track">
@@ -119,136 +211,255 @@
       <canvas id="canvas"></canvas>
 
       <div class="caption-box" id="chap1">
-        <p class="chapter-tag" id="tag1">Stage 01 / Ground Fleet</p>
-        <p class="title" id="t1">Freight In Motion</p>
+        <div class="tag-mask"><p class="chapter-tag" id="tag1">Stage 01 — Ground Fleet</p></div>
+        <div class="title-mask"><h1 class="title" id="t1">Freight In Motion</h1></div>
       </div>
 
       <div class="caption-box" id="chap2">
-        <p class="chapter-tag" id="tag2">Stage 02 / Warehouse & CFS</p>
-        <p class="title" id="t2">Automated Handling</p>
+        <div class="tag-mask"><p class="chapter-tag" id="tag2">Stage 02 — Warehouse &amp; CFS</p></div>
+        <div class="title-mask"><h2 class="title" id="t2">Automated Handling</h2></div>
       </div>
 
       <div class="caption-box" id="chap3">
-        <p class="chapter-tag" id="tag3">Stage 03 / Ocean Transit</p>
-        <p class="title" id="t3">Deep Sea Container Line</p>
+        <div class="tag-mask"><p class="chapter-tag" id="tag3">Stage 03 — Ocean Transit</p></div>
+        <div class="title-mask"><h2 class="title" id="t3">Deep Sea Container Line</h2></div>
       </div>
 
       <div class="caption-box" id="chap4">
-        <p class="chapter-tag" id="tag4">Stage 04 / Port Clearance</p>
-        <p class="title" id="t4">ICEGATE & Customs Gate</p>
+        <div class="tag-mask"><p class="chapter-tag" id="tag4">Stage 04 — Port Clearance</p></div>
+        <div class="title-mask"><h2 class="title" id="t4">ICEGATE &amp; Customs Gate</h2></div>
       </div>
     </div>
   </div>
 
   <script>
-    const CHAPTERS = [
-      { folder: 'assets/chapter1', count: 144 },
-      { folder: 'assets/chapter2', count: 168 },
-      { folder: 'assets/chapter3', count: 168 },
-      { folder: 'assets/chapter4', count: 168 }
-    ];
+    (function () {
+      "use strict";
 
-    const canvas = document.getElementById("canvas");
-    const ctx = canvas.getContext("2d");
+      gsap.registerPlugin(ScrollTrigger);
 
-    const loadedAssets = [[], [], [], []];
-    const state = { activeChapter: 0, frameIndex: 0 };
+      // ——— Chapter configuration (verified on-disk frame counts) ———
+      var CHAPTERS = [
+        { folder: "assets/chapter1", count: 144 },
+        { folder: "assets/chapter2", count: 168 },
+        { folder: "assets/chapter3", count: 168 },
+        { folder: "assets/chapter4", count: 168 }
+      ];
 
-    const lenis = new Lenis({ lerp: 0.08, smoothWheel: true });
-    lenis.on("scroll", ScrollTrigger.update);
-    gsap.ticker.add((time) => lenis.raf(time * 1000));
-    gsap.ticker.lagSmoothing(0);
+      var FADE_FRAMES = 2;          // 2-frame cross-dissolve at chapter handoff
+      var totalFrames = CHAPTERS.reduce(function (s, c) { return s + c.count; }, 0);
 
-    function resizeCanvas() {
-      const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = window.innerWidth * dpr;
-      canvas.height = window.innerHeight * dpr;
-      canvas.style.width = `${window.innerWidth}px`;
-      canvas.style.height = `${window.innerHeight}px`;
-      render();
-    }
+      var canvas = document.getElementById("canvas");
+      var ctx = canvas.getContext("2d");
 
-    function render() {
-      const currentList = loadedAssets[state.activeChapter];
-      if (!currentList || !currentList[state.frameIndex]) return;
+      var loadedAssets = [];
+      for (var i = 0; i < CHAPTERS.length; i++) loadedAssets.push([]);
 
-      const img = currentList[state.frameIndex];
-      if (!img || !img.complete) return;
+      // scroll-state machine for canvas rendering
+      var state = {
+        chapter: 0,
+        frame: 0,
+        fromChapter: -1,   // chapter we are cross-fading away from
+        forward: true,     // direction of the last chapter switch
+        fadeDone: true
+      };
 
-      ctx.imageSmoothingEnabled = true;
-      ctx.imageSmoothingQuality = "high";
+      var reduceMotion = window.matchMedia &&
+        window.matchMedia("(prefers-reduced-motion: reduce)").matches;
 
-      const hRatio = canvas.width / img.width;
-      const vRatio = canvas.height / img.height;
-      const ratio = Math.max(hRatio, vRatio);
+      // ——— Lenis smooth scroll (inertia / momentum): weighted damping ———
+      var lenis = null;
+      if (!reduceMotion) {
+        lenis = new Lenis({
+          lerp: 0.07,
+          smoothWheel: true,
+          wheelMultiplier: 1
+        });
+        lenis.on("scroll", ScrollTrigger.update);
+        gsap.ticker.add(function (time) { lenis.raf(time * 1000); });
+        gsap.ticker.lagSmoothing(0);
+      }
 
-      const shiftX = (canvas.width - img.width * ratio) / 2;
-      const shiftY = (canvas.height - img.height * ratio) / 2;
+      var prefersSmooth = !reduceMotion;
 
-      ctx.clearRect(0, 0, canvas.width, canvas.height);
-      ctx.drawImage(
-        img,
-        0, 0, img.width, img.height,
-        shiftX, shiftY, img.width * ratio, img.height * ratio
-      );
-    }
+      // ——— Canvas: retina / high-DPI ———
+      function resizeCanvas() {
+        var dpr = Math.min(window.devicePixelRatio || 1, 2);
+        canvas.width = Math.round(window.innerWidth * dpr);
+        canvas.height = Math.round(window.innerHeight * dpr);
+        canvas.style.width = window.innerWidth + "px";
+        canvas.style.height = window.innerHeight + "px";
+        render();
+      }
 
-    window.addEventListener("resize", resizeCanvas);
+      // ——— object-fit: cover math — centered, never stretched ———
+      function drawFrame(img, alpha) {
+        var ratio = Math.max(
+          canvas.width / img.naturalWidth,
+          canvas.height / img.naturalHeight
+        );
+        var w = img.naturalWidth * ratio;
+        var h = img.naturalHeight * ratio;
+        ctx.imageSmoothingEnabled = true;          // re-asserted on EVERY render
+        ctx.imageSmoothingQuality = "high";
+        ctx.globalAlpha = alpha;
+        ctx.drawImage(img, (canvas.width - w) / 2, (canvas.height - h) / 2, w, h);
+        ctx.globalAlpha = 1;
+      }
 
-    const totalImages = CHAPTERS.reduce((sum, ch) => sum + ch.count, 0);
-    let loadedImages = 0;
-    const progressEl = document.getElementById("progress");
-    const loaderEl = document.getElementById("loader");
+      function render() {
+        var list = loadedAssets[state.chapter];
+        if (!list) return;
+        var frame = list[state.frame];
+        if (!frame || !frame.complete || frame.naturalWidth === 0) return;
 
-    CHAPTERS.forEach((ch, chIdx) => {
-      for (let i = 1; i <= ch.count; i++) {
-        const img = new Image();
-        img.src = `${ch.folder}/frame_${String(i).padStart(4, '0')}.webp`;
-        img.onload = () => {
-          loadedImages++;
-          progressEl.style.width = `${(loadedImages / totalImages) * 100}%`;
-          if (loadedImages === 1) resizeCanvas();
-          if (loadedImages === totalImages) {
-            gsap.to(loaderEl, { opacity: 0, duration: 0.5, onComplete: () => loaderEl.remove() });
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+        // ——— 2-frame alpha cross-dissolve between chapters ———
+        if (!state.fadeDone && state.fromChapter >= 0) {
+          var fromList = loadedAssets[state.fromChapter];
+          if (fromList && fromList.length) {
+            var fromIdx = state.forward ? fromList.length - 1 : 0;
+            var fromFrame = fromList[fromIdx];
+            if (fromFrame && fromFrame.complete && fromFrame.naturalWidth) {
+              var d = state.forward
+                ? state.frame
+                : CHAPTERS[state.chapter].count - 1 - state.frame;
+              // outgoing chapter holds underneath while the incoming frame dissolves in
+              drawFrame(fromFrame, 1);
+              drawFrame(frame, Math.min(1, (d + 1) / FADE_FRAMES));
+              return;
+            }
           }
-        };
-        loadedAssets[chIdx].push(img);
-      }
-    });
-
-    gsap.registerPlugin(ScrollTrigger);
-
-    const masterTL = gsap.timeline({
-      scrollTrigger: {
-        trigger: "#track",
-        start: "top top",
-        end: "bottom bottom",
-        scrub: 1.0,
-      }
-    });
-
-    CHAPTERS.forEach((ch, idx) => {
-      const stepStart = idx * 10;
-
-      const chapterState = { frame: 0 };
-      masterTL.to(chapterState, {
-        frame: ch.count - 1,
-        snap: "frame",
-        ease: "none",
-        duration: 10,
-        onUpdate: () => {
-          state.activeChapter = idx;
-          state.frameIndex = Math.round(chapterState.frame);
-          render();
         }
-      }, stepStart);
+        drawFrame(frame, 1);
+      }
 
-      const tag = `#tag${idx + 1}`;
-      const title = `#t${idx + 1}`;
+      window.addEventListener("resize", resizeCanvas);
+      window.addEventListener("orientationchange", function () {
+        setTimeout(resizeCanvas, 120);
+      });
 
-      masterTL.to([tag, title], { opacity: 1, y: 0, duration: 2, stagger: 0.2 }, stepStart + 1)
-              .to([tag, title], { opacity: 0, y: -30, duration: 2, stagger: 0.2 }, stepStart + 7);
-    });
+      // ——— Sequential preloader with smooth progress ———
+      var progressEl = document.getElementById("progress");
+      var pctEl = document.getElementById("pct");
+      var stageEl = document.getElementById("loaderStage");
+      var loaderEl = document.getElementById("loader");
+      var loadedCount = 0;
+
+      function framePath(folder, n) {
+        return folder + "/frame_" + String(n).padStart(4, "0") + ".webp";
+      }
+
+      function preload(next) {
+        function nextChapter(ci) {
+          if (ci >= CHAPTERS.length) { next(); return; }
+          stageEl.textContent = "Stage 0" + (ci + 1) + " / 04";
+          var ch = CHAPTERS[ci];
+          var fi = 0;
+
+          function nextFrame() {
+            if (fi >= ch.count) { nextChapter(ci + 1); return; }
+            var img = new Image();
+            img.decoding = "async";
+            loadedAssets[ci][fi] = img;
+            img.onload = img.onerror = function () {
+              loadedCount++;
+              var p = loadedCount / totalFrames;
+              progressEl.style.width = (p * 100).toFixed(2) + "%";
+              pctEl.textContent = Math.round(p * 100) + "%";
+              fi++;
+              nextFrame();
+            };
+            img.src = framePath(ch.folder, fi + 1);
+          }
+          nextFrame();
+        }
+        nextChapter(0);
+      }
+
+      preload(function () {
+        // one paint before reveal so frame 0 is never blank
+        resizeCanvas();
+        ScrollTrigger.refresh();
+        gsap.to(loaderEl, {
+          opacity: 0,
+          duration: 0.6,
+          delay: 0.15,
+          onComplete: function () { loaderEl.remove(); }
+        });
+      });
+
+      // ——— Initial hidden states (masks hold the text below the fold line) ———
+      gsap.set(".chapter-tag", { yPercent: 110 });
+      gsap.set(".title", { yPercent: 112 });
+
+      // ——— Master scrub timeline — weighted physical damping (scrub 1.4) ———
+      var masterTL = gsap.timeline({
+        scrollTrigger: {
+          trigger: "#track",
+          start: "top top",
+          end: "bottom bottom",
+          scrub: prefersSmooth ? 1.4 : true,
+          invalidateOnRefresh: true
+        }
+      });
+
+      // Each chapter owns a 10-unit slot:
+      //   0.0 – 2.5  Entrance  (0–25%)   frame scrub starts, text rises from masks
+      //   2.5 – 7.5  Plateau   (25–75%)  travel arc continues, text locked & legible
+      //   7.5 – 10.0 Exit      (75–100%) text drifts up (+fades), frames complete cleanly
+      CHAPTERS.forEach(function (ch, idx) {
+        var start = idx * 10;
+        var local = { f: 0 };
+
+        // vehicle travel arc: linear scrub across the full chapter slot
+        masterTL.to(local, {
+          f: ch.count - 1,
+          ease: "none",
+          duration: 10,
+          onUpdate: (function (closedIdx, closedCh, closedLocal) {
+            return function () {
+              var fi = Math.max(0, Math.min(closedCh.count - 1, Math.round(closedLocal.f)));
+
+              // chapter handoff detected → arm the 2-frame cross-dissolve
+              if (closedIdx !== state.chapter) {
+                state.fromChapter = state.chapter;
+                state.forward = closedIdx > state.chapter;
+                state.chapter = closedIdx;
+                state.fadeDone = false;
+              }
+              if (!state.fadeDone) {
+                var d = state.forward
+                  ? fi
+                  : closedCh.count - 1 - fi;
+                if (d >= FADE_FRAMES) state.fadeDone = true;
+              }
+              state.frame = fi;
+              render();
+            };
+          })(idx, ch, local)
+        }, start);
+
+        // ENTRANCE — micro-label, then title, both rising out of overflow-hidden masks
+        masterTL.fromTo("#tag" + (idx + 1),
+          { yPercent: 110 },
+          { yPercent: 0, duration: 1.1, ease: "power3.out", immediateRender: false },
+          start + 0.2);
+        masterTL.fromTo("#t" + (idx + 1),
+          { yPercent: 112 },
+          { yPercent: 0, duration: 1.9, ease: "power3.out", immediateRender: false },
+          start + 0.5);
+
+        // EXIT & HANDOFF — drift up 40px and fade, completing before the next stage
+        masterTL.to("#chap" + (idx + 1), {
+          y: -40,
+          opacity: 0,
+          duration: 1.8,
+          ease: "power2.in"
+        }, start + 7.6);
+      });
+    })();
   </script>
 </body>
 </html>
